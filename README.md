@@ -11,6 +11,6 @@ O aplicativo simula um papagaio, no qual a criança digitaria uma palavra no tec
 
 <p> Com o emulador aberto entre no pasta do projeto e rode o seguintes comandos: </p>
 <p> - npm install </p>
-<p> - react-native run-android ou react-native run-ios </p>
+<p> - react-native run-android </p>
 
 
