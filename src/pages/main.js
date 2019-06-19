@@ -4,6 +4,8 @@ import { Container, Header, Content, Text, Right, Body, Title, Item, Input } fro
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-community/async-storage';
 
+let ws;
+
 export default class Main extends Component {
     state = {
         message: '',
@@ -12,7 +14,8 @@ export default class Main extends Component {
     }
 
     componentDidMount = async () => {
-     
+
+
         try {
             let messages = await AsyncStorage.getItem('@Parrot_messages');
             if (messages) {
@@ -21,42 +24,45 @@ export default class Main extends Component {
         } catch (error) {
             this.setState({ messages: [] })
         }
+
+        this.openWebSocket();
     }
 
     sendMessage = (message) => {
-        this.setState({ message: '' });
-        var ws = new WebSocket('ws://echo.websocket.org');
 
-        ws.onopen = () => {
-            console.log('connection opened');
-            ws.send(message); // send a message
-        };
-
+        //criando mensagem
+        ws.send(message); // send a message
         ws.onmessage = (e) => {
+            let data = [...this.state.messages];
+            data.push(message);
+            this.setState({ message: '', messages: data });
             console.log(e.data);
-            this.updateMessages(message, e.data);
+            data.push(e.data);
+            this.setState({ messages: data });
+
         };
 
         ws.onerror = (e) => {
             // an error occurred
-            Alert.alert("Ops, ocorreu algum problema : (");
+            Alert.alert("Ops, ocorreu algum problema :(");
         };
 
+    }
+
+    openWebSocket = () => {
+        ws = new WebSocket('ws://echo.websocket.org');
+        ws.onopen = () => {
+            console.log('connection opened');
+        };
+    }
+
+    closeWebSocket = () => {
         ws.onclose = (e) => {
             // connection closed
             console.log(e.code, e.reason);
         };
-
     }
-    updateMessages = async (message, echo) => {
-        let data = [...this.state.messages];
-        data.push(message);
-        data.push(echo);
 
-        this.setState({ messages: data });
-        await AsyncStorage.setItem('@Parrot_messages', JSON.stringify(data));
-
-    }
     renderMessages = (item, index) => {
 
         if (index % 2 == 0)
@@ -79,7 +85,7 @@ export default class Main extends Component {
     }
 
     componentWillUnmount() {
-    
+        this.closeWebSocket();
     }
 
     render() {
@@ -97,15 +103,12 @@ export default class Main extends Component {
                     </Right>
                 </Header>
                 <Content padder>
-                    <ScrollView ref={(scroll) => { this.scroll = scroll; }}>
+                    <FlatList
+                        data={messages}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item, index }) => this.renderMessages(item, index)}
 
-                        <FlatList
-                            data={messages}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item, index }) => this.renderMessages(item, index)}
-
-                        />
-                    </ScrollView>
+                    />
                 </Content>
                 <Item style={{ padding: '5%', paddingBottom: '3%', backgroundColor: 'transparent' }}>
                     <Input
