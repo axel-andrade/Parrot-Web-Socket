@@ -13,7 +13,7 @@
     "react-native": "0.59.9",
     "react-native-vector-icons": "^6.5.0",
     "react-navigation": "^2.18.3",
-    "ws": "^7.0.1"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
