@@ -10,7 +10,7 @@
     "@react-native-community/async-storage": "^1.5.0",
     "native-base": "^2.12.1",
     "react": "16.8.3",
-    "react-native": "0.59.9",
+    "react-native": "0.62.3",
     "react-native-vector-icons": "^6.5.0",
     "react-navigation": "^2.18.3",
     "ws": "^7.0.1"
